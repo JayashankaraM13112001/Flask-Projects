@@ -1,5 +1,6 @@
 {% extends "bootstrap/base.html" %} {% block title %} Dashboard {% endblock %} {% block styles %} {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %} {% block content %}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %}
+{% block content %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -13,11 +14,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('links_list') }}">Your Links</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Profile</a></li>
-                 <li><a href="{{ url_for('add_link') }}">Add Link</a></li>
-                <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('signup') }}">Sign up</a></li>
+                <li><a href="{{ url_for('login') }}">Log in</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <input type="text" class="form-control" placeholder="Search...">
@@ -27,7 +26,16 @@
 </nav>
 
 <div>
-    <h1 class="page-header">Welcome, {{ name }}</h1>
+    <h3 class="link-list-header">{{ name }}'s links are listed here.</h3>
+    {% for link in links %}
+        <div class="link-box">
+            <div class="link-content">
+                <p class="link-name">{{ link.linkname }}</p>
+                <p class="link-url">{{ link.linkurl }}</p>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
 </div>
 
 {% endblock %}

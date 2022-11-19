@@ -38,3 +38,15 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.error-msg {
+    padding-left:20px;
+    width:max-content;
+    height:max-content;
+    color:red;
+}
+
+.error-msg p {
+    font-size:20px;
+    font-weight:bold;
+}

@@ -10,8 +10,6 @@ import os
 
 app=Flask(__name__)
 app.app_context().push()
-
-basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SECRET_KEY']='Thisissupposedtobesecret!'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///database.db'
 bootstrap=Bootstrap(app)
@@ -27,6 +25,13 @@ class User(UserMixin, db.Model):
     username=db.Column(db.String(15), unique = True)
     email=db.Column(db.String(50), unique = True)
     password=db.Column(db.String(80))
+
+
+class Link(db.Model):
+    id=db.Column(db.Integer, primary_key = True)
+    username=db.Column(db.String(15))
+    linkname=db.Column(db.String(50))
+    linkurl=db.Column(db.String(200))
 
 
 @login_manager.user_loader
@@ -46,9 +51,27 @@ class RegisterForm(FlaskForm):
     password=PasswordField('password', validators = [InputRequired(), Length(min = 8, max = 80)])
 
 
-@app.route('/')
+class AddLinkForm(FlaskForm):
+    linkname=StringField('linkname', validators = [InputRequired(), Length(max = 50)])
+    linkurl=StringField('linkurl', validators = [InputRequired(), Length(max = 200)])
+
+
+class SerachTreeForm(FlaskForm):
+    treename=StringField('treename', validators = [InputRequired(), Length(min = 4)])
+
+
+@app.route('/',methods=['GET','POST'])
 def index():
-    return render_template('index.html')
+    form=SerachTreeForm()
+    if form.validate_on_submit():
+        tree=Link.query.filter_by(username = form.treename.data).first()
+        if tree:
+            links=Link.query.filter_by(username = form.treename.data).all()
+            return render_template('print_tree.html', links = links, name=form.treename.data)
+        else:
+            return render_template('index', error_msg = "No data exist", form = form)
+
+    return render_template('index.html', form = form)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -61,8 +84,8 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember = form.remember.data)
                 return redirect(url_for('dashboard'))
-
-        return '<h1>Invalid username or password</h1>'
+        error_msg="Invalid username or password"
+        return render_template('login.html', form = form, error_msg = error_msg)
         # return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
     return render_template('login.html', form = form)
@@ -78,10 +101,44 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        return '<h1>New user has been created!</h1>'
+        return redirect(url_for('login'))
         # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
 
     return render_template('signup.html', form = form)
+
+
+@app.route('/links_list')
+@login_required
+def links_list():
+    links=Link.query.filter_by(username = current_user.username).all()
+    return render_template('links_list.html', links = links, name = current_user.username)
+    # except Exception as e:
+    # return redirect(url_for('dashboard'))
+
+
+@app.route('/add_link', methods = ['GET', 'POST'])
+@login_required
+def add_link():
+    form=AddLinkForm()
+    if form.validate_on_submit():
+        new_link=Link(username = current_user.username, linkname = form.linkname.data, linkurl = form.linkurl.data)
+        db.session.add(new_link)
+        db.session.commit()
+
+        return redirect(url_for('links_list'))
+
+    return render_template('add_link.html', form = form)
+
+
+@app.route('/delete/<lid>', methods = ['GET'])
+@login_required
+def delete(lid):
+    if lid:
+        Link.query.filter_by(id = lid).delete()
+    else:
+        return redirect(url_for('add_link'))
+
+    return '<h1>Something went wrong </h1>'
 
 
 @app.route('/dashboard')
@@ -95,6 +152,13 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+# Ensure responses aren't cached
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"]="no-cache, no-store, must-revalidate"
+    return response
 
 
 if __name__=='__main__':

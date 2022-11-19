@@ -1,5 +1,16 @@
-{% extends "bootstrap/base.html" %} {% block title %} Dashboard {% endblock %} {% block styles %} {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %} {% block content %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Add New Link
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -16,7 +27,7 @@
                 <li><a href="{{ url_for('links_list') }}">Your Links</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="#">Profile</a></li>
-                 <li><a href="{{ url_for('add_link') }}">Add Link</a></li>
+                <li><a href="{{ url_for('add_link') }}">Add Link</a></li>
                 <li><a href="{{ url_for('logout') }}">Log Out</a></li>
             </ul>
             <form class="navbar-form navbar-right">
@@ -26,8 +37,15 @@
     </div>
 </nav>
 
-<div>
-    <h1 class="page-header">Welcome, {{ name }}</h1>
-</div>
+<div class="container">
 
+  <form class="form-signin" method="POST" action="/add_link">
+    <h2 class="form-signin-heading">Add Link</h2>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.linkname) }}
+    {{ wtf.form_field(form.linkurl) }}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Add</button>
+  </form>
+
+</div> <!-- /container -->
 {% endblock %}
