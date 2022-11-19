@@ -6,7 +6,7 @@ from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import os
+import webbrowser
 
 app=Flask(__name__)
 app.app_context().push()
@@ -56,20 +56,25 @@ class AddLinkForm(FlaskForm):
     linkurl=StringField('linkurl', validators = [InputRequired(), Length(max = 200)])
 
 
+class EditLinkForm(FlaskForm):
+    link_name=StringField('Linkname', validators = [InputRequired(), Length(max = 50)])
+    link_url=StringField('Linkurl', validators = [InputRequired(), Length(max = 200)])
+
+
 class SerachTreeForm(FlaskForm):
     treename=StringField('treename', validators = [InputRequired(), Length(min = 4)])
 
 
-@app.route('/',methods=['GET','POST'])
+@app.route('/', methods = ['GET', 'POST'])
 def index():
     form=SerachTreeForm()
     if form.validate_on_submit():
         tree=Link.query.filter_by(username = form.treename.data).first()
         if tree:
             links=Link.query.filter_by(username = form.treename.data).all()
-            return render_template('print_tree.html', links = links, name=form.treename.data)
+            return render_template('print_tree.html', links = links, name = form.treename.data)
         else:
-            return render_template('index', error_msg = "No data exist", form = form)
+            return render_template('index.html', error_msg = "No data exist", form = form)
 
     return render_template('index.html', form = form)
 
@@ -112,8 +117,6 @@ def signup():
 def links_list():
     links=Link.query.filter_by(username = current_user.username).all()
     return render_template('links_list.html', links = links, name = current_user.username)
-    # except Exception as e:
-    # return redirect(url_for('dashboard'))
 
 
 @app.route('/add_link', methods = ['GET', 'POST'])
@@ -130,15 +133,28 @@ def add_link():
     return render_template('add_link.html', form = form)
 
 
-@app.route('/delete/<lid>', methods = ['GET'])
+@app.route('/delete/<lid>', methods = ['GET', 'POST'])
 @login_required
 def delete(lid):
     if lid:
         Link.query.filter_by(id = lid).delete()
+        db.session.commit()
+        return redirect(url_for('links_list'))
     else:
         return redirect(url_for('add_link'))
 
-    return '<h1>Something went wrong </h1>'
+
+@app.route('/edit/<lid>',methods=['GET','POST'])
+@login_required
+def edit(lid):
+    form=EditLinkForm()
+    lnk=Link.query.filter_by(id = lid).first()
+    if form.validate_on_submit():
+        lnk.linkname=form.link_name.data
+        lnk.linkurl=form.link_url.data
+        db.session.commit()
+        return redirect(url_for('links_list'))
+    return render_template('edit_link.html',form=form,llid=lid)
 
 
 @app.route('/dashboard')

@@ -96,7 +96,7 @@ body {
     list-style-type:none;
     margin-left: 30px;
     width: 400px;
-    height: 90px;
+    height: max-content;
     padding: 10px 10px 10px 15px;
     border-radius: 20px;
     overflow: hidden;
@@ -111,12 +111,15 @@ body {
     font-size: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bolder;
+    overflow:hidden;
 }
 
 .link-box .link-url {
     font-size: 15px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 500;
+    max-width:260px;
+    overflow:hidden;
 }
 
 .link-box .link-delete,.link-edit {
@@ -127,6 +130,7 @@ body {
     margin-right:5px;
     background-color: rgb(240, 188, 188);
     width:50px;
+    max-width:80px;
     height:25px;
     padding:8px;
     border-radius:5px;
@@ -141,4 +145,8 @@ body {
 .link-box .link-edit:hover{
     background-color: rgb(6, 124, 6);
     cursor:pointer;
+}
+
+.link-box .link-alter a:link{
+    text-decoration:none;
 }
