@@ -1,16 +1,5 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-
-{% block title %}
-Add New Link
-{% endblock %}
-
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
-{% endblock %}
-
-{% block content %}
+{% extends "bootstrap/base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block title %} Edit Link {% endblock %} {% block styles %} {{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}"> {% endblock %} {% block content %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -24,7 +13,8 @@ Add New Link
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('links_list') }}">Your Links</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('links_list') }}">Links</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="#">Profile</a></li>
                 <li><a href="{{ url_for('add_link') }}">Add Link</a></li>
@@ -39,13 +29,12 @@ Add New Link
 
 <div class="container">
 
-  <form class="form-signin" method="POST" action="/edit/{{llid}}">
-    <h2 class="form-signin-heading">Update Link</h2>
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.link_name,placeholder='Enter new link name') }}
-    {{ wtf.form_field(form.link_url,placeholder='Enter new link URL') }}
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
-  </form>
+    <form class="form-signin" method="POST" action="/edit/{{llid}}">
+        <h2 class="form-signin-heading">Update Link</h2>
+        {{ form.hidden_tag() }} {{ wtf.form_field(form.link_name,placeholder='Enter new link name') }} {{ wtf.form_field(form.link_url,placeholder='Enter new link URL') }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+    </form>
 
-</div> <!-- /container -->
+</div>
+<!-- /container -->
 {% endblock %}

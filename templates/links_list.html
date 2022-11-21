@@ -1,6 +1,5 @@
-{% extends "bootstrap/base.html" %} {% block title %} Dashboard {% endblock %} {% block styles %} {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %}
-{% block content %}
+{% extends "bootstrap/base.html" %} {% block title %} Links {% endblock %} {% block styles %} {{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %} {% block content %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -28,21 +27,21 @@
 </nav>
 
 <div>
-    <h1 class="page-header">Welcome {{ name }}</h1>
-    <h3 class="link-list-header">Your links are listed here.</h3>
+    <a href="{{ url_for('add_link') }}">
+        <div class="add-new-link-btn">Add New Link</div>
+    </a>
     {% for link in links %}
-        <div class="link-box">
-            <div class="link-content">
-                <p class="link-name">{{ link.linkname }}</p>
-                <div class="link-url"><a href="{{link.linkurl}}" target="_blank">{{link.linkurl}}</a></div>
-            </div>
-            <div class="link-alter">
-                <div class="link-delete"><a href="delete/{{link.id}}">Delete</a></div>
-                <div class="link-edit"><a href="edit/{{link.id}}">Edit</a></div>
-            </div>
+    <div class="link-box">
+        <div class="link-content">
+            <p class="link-name">{{ link.linkname }}</p>
+            <div class="link-url"><a href="{{link.linkurl}}" target="_blank">{{link.linkurl}}</a></div>
         </div>
-        <br>
-    {% endfor %}
+        <div class="link-alter">
+            <div class="link-delete"><a href="delete/{{link.id}}">Delete</a></div>
+            <div class="link-edit"><a href="edit/{{link.id}}">Edit</a></div>
+        </div>
+    </div>
+    <br> {% endfor %}
 </div>
 
 {% endblock %}

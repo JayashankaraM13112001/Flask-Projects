@@ -1,6 +1,5 @@
-{% extends "bootstrap/base.html" %} {% block title %} Dashboard {% endblock %} {% block styles %} {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %}
-{% block content %}
+{% extends "bootstrap/base.html" %} {% block title %} Tree {% endblock %} {% block styles %} {{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> {% endblock %} {% block content %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -28,14 +27,13 @@
 <div>
     <h3 class="link-list-header">{{ name }}'s links are listed here.</h3>
     {% for link in links %}
-        <div class="link-box">
-            <div class="link-content">
-                <p class="link-name">{{ link.linkname }}</p>
-                <div class="link-url"><a href="{{link.linkurl}}" target="_blank">{{link.linkurl}}</a></div>
-            </div>
+    <div class="link-box">
+        <div class="link-content">
+            <p class="link-name">{{ link.linkname }}</p>
+            <div class="link-url"><a href="{{link.linkurl}}" target="_blank">{{link.linkurl}}</a></div>
         </div>
-        <br>
-    {% endfor %}
+    </div>
+    <br> {% endfor %}
 </div>
 
 {% endblock %}
