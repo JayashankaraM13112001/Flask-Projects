@@ -23,7 +23,7 @@ login_manager.login_view='login'
 class User(UserMixin, db.Model):
     id=db.Column(db.Integer, primary_key = True)
     username=db.Column(db.String(15), unique = True)
-    email=db.Column(db.String(50), unique = True)
+    email=db.Column(db.String(50))
     password=db.Column(db.String(80))
 
 
@@ -101,13 +101,17 @@ def signup():
     form=RegisterForm()
 
     if form.validate_on_submit():
-        hashed_password=generate_password_hash(form.password.data, method = 'sha256')
-        new_user=User()
-        new_user.username=form.username.data
-        new_user.email=form.email.data
-        new_user.password=hashed_password
-        db.session.add(new_user)
-        db.session.commit()
+        usr=User.query.filter_by(username=form.username.data).first()
+        if usr:
+            return render_template('signup.html',form=form,err_msg="Username is already taken")
+        else:
+            hashed_password=generate_password_hash(form.password.data, method = 'sha256')
+            new_user=User()
+            new_user.username=form.username.data
+            new_user.email=form.email.data
+            new_user.password=hashed_password
+            db.session.add(new_user)
+            db.session.commit()
 
         return redirect(url_for('login'))
         # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
