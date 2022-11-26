@@ -102,8 +102,16 @@ def signup():
 
     if form.validate_on_submit():
         usr=User.query.filter_by(username=form.username.data).first()
-        if usr:
-            return render_template('signup.html',form=form,err_msg="Username is already taken")
+        usr_email=User.query.filter_by(email=form.email.data).first()
+        if usr or usr_email:
+            if usr and usr_email:
+                err_msg="Username and Email are already taken"
+            elif usr:
+                err_msg="Username is already taken"
+            else:
+                err_msg="Email is already taken"
+
+            return render_template('signup.html',form=form,err_msg=err_msg)
         else:
             hashed_password=generate_password_hash(form.password.data, method = 'sha256')
             new_user=User()

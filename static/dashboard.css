@@ -132,6 +132,7 @@ body {
     font-size: 21px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bolder;
+    max-width: 260px;
     overflow: hidden;
 }
 
